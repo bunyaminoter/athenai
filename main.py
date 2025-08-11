@@ -1,0 +1,1 @@
+### model ve api tamamlandı küçük veri setleriyle test ediidi. Büyük bir veri seti eklenecek
