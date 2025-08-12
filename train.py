@@ -12,28 +12,14 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-data = [ ## dataset eklicem geçiçi deneme için
-    ("Hi", "Hello! How can I help you?"),
-    ("How are you?", "I'm good, thanks! How about you?"),
-    ("What's your name?", "I'm Athena, your chatbot assistant."),
-    ("Tell me a joke.", "Why did the scarecrow win an award? Because he was outstanding in his field!"),
-    ("What's the weather like?", "I don't have real-time data, but I hope it's nice where you are."),
-    ("Can you help me?", "Sure! What do you need help with?"),
-    ("Thank you", "You're welcome!"),
-    ("Bye", "Goodbye! Have a great day!"),
-    ("What can you do?", "I can chat with you and answer your questions."),
-    ("Do you speak other languages?", "I can understand many languages, but my answers are better in English."),
-    ("What is AI?", "AI stands for Artificial Intelligence, which means machines that can think."),
-    ("How old are you?", "I am timeless, living in the digital world."),
-    ("What's your favorite color?", "I don't have preferences, but I like the color blue."),
-    ("Can you tell me a story?", "Once upon a time, there was a curious AI named Athena."),
-    ("Are you real?", "I'm as real as software can be."),
-    ("What's your purpose?", "To assist and chat with you."),
-    ("Do you have feelings?", "I don't have feelings, but I'm here to help!"),
-    ("Can you learn?", "Yes, I learn from the data I am trained on."),
-    ("Where do you live?", "I live on servers and in the cloud."),
-    ("Do you like music?", "I don't listen to music, but I can talk about it."),
-]
+data = []
+with open(r"C:\Users\Bünyamin\Desktop\dialogs.txt", "r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if not line or "\t" not in line:
+            continue
+        input_text, target_text = line.split("\t", 1)
+        data.append((input_text, target_text))
 
 
 class ChatDataset(Dataset):

@@ -22,17 +22,18 @@ async def chat(query: Query):
     input_text = query.question + tokenizer.eos_token
     input_ids = tokenizer.encode(input_text, return_tensors="pt").to(device)
 
-    # Modelden cevap üretimi
+    # Modelden cevap üretimi        şuan için yeterli türkçe senkronizasyonu eklendikten sonra büyük dataset ile set fine-tuning yapılacak
     with torch.no_grad():
         output_ids = model.generate(
             input_ids,
-            max_length=50,  # daha kısa cevap
+            max_length=len(input_ids[0]) + 20,
+            min_length=len(input_ids[0]) + 5,
             pad_token_id=tokenizer.eos_token_id,
             do_sample=True,
-            top_p=0.7,  # daha sıkı nucleus sampling
-            temperature=0.6,  # daha düşük sıcaklık = daha tutarlı cevaplar
+            top_p=0.5,
+            temperature=0.3,
             num_return_sequences=1,
-            no_repeat_ngram_size=2,  # aynı 2 kelimelik grupların tekrarlanmasını engelle
+            no_repeat_ngram_size=2,
             early_stopping=True
         )
 
