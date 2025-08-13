@@ -2,8 +2,14 @@ import torch
 from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from translate_client import Translator
 
 app = FastAPI()
+
+# Google Cloud çeviri ayarları
+GOOGLE_PROJECT_ID = "chatbot-translate-468818"  # kendi proje ID'niz
+translator = Translator(GOOGLE_PROJECT_ID)
+
 
 MODEL_PATH = "./saved_model"
 
@@ -19,26 +25,42 @@ class Query(BaseModel):
 
 @app.post("/chat")
 async def chat(query: Query):
-    input_text = query.question + tokenizer.eos_token
+    user_text = query.question
+
+    # 1. Dil algılama
+    detected_lang = translator.detect_language(user_text)
+
+    # 2. İngilizce değilse İngilizceye çevir
+    if detected_lang != "en":
+        user_text_en = translator.translate_text(user_text, "en")
+    else:
+        user_text_en = user_text
+
+    # 3. Model input hazırlama
+    input_text = user_text_en + tokenizer.eos_token
     input_ids = tokenizer.encode(input_text, return_tensors="pt").to(device)
 
-    # Modelden cevap üretimi        şuan için yeterli türkçe senkronizasyonu eklendikten sonra büyük dataset ile set fine-tuning yapılacak
+    # 4. Cevap üretimi
     with torch.no_grad():
         output_ids = model.generate(
             input_ids,
-            max_length=len(input_ids[0]) + 20,
-            min_length=len(input_ids[0]) + 5,
+            max_length=50,
             pad_token_id=tokenizer.eos_token_id,
             do_sample=True,
             top_p=0.5,
             temperature=0.3,
             num_return_sequences=1,
             no_repeat_ngram_size=2,
-            early_stopping=True
+            early_stopping=True,
         )
+    response_en = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+    answer_en = response_en[len(user_text_en):].strip()
 
-    response = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-    # cevabı sadeleştirdm
-    answer = response[len(query.question):].strip()
+
+    # 5. Cevabı tekrar orijinal dile çevir
+    if detected_lang != "en":
+        answer = translator.translate_text(answer_en, detected_lang)
+    else:
+        answer = answer_en
 
     return {"answer": answer}
