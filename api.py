@@ -4,7 +4,23 @@ from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from translate_client import Translator
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",  # React uygulamanın çalıştığı adres
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Buraya izin ver
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Google Cloud çeviri ayarları
 GOOGLE_PROJECT_ID = "chatbot-translate-468818"  # kendi proje ID'niz
@@ -63,4 +79,5 @@ async def chat(query: Query):
     else:
         answer = answer_en
 
-    return {"answer": answer}
+
+    return {"answer": answer, "lang": detected_lang}

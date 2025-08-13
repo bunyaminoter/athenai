@@ -1,1 +1,1 @@
-### model ve api tamamlandı küçük veri setleriyle test ediidi. Büyük bir veri seti eklenecek
+### google clouddan kendi API isteğinizi yazmanız gerekiyor benim API isteklerimi kullanmayın
