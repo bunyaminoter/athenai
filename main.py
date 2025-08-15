@@ -1,1 +1,1 @@
-### google clouddan kendi API isteğinizi yazmanız gerekiyor benim API isteklerimi kullanmayın
+## please look at README.md

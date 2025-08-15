@@ -60,13 +60,13 @@ async def chat(query: Query):
     with torch.no_grad():
         output_ids = model.generate(
             input_ids,
-            max_length=50,
+            max_new_tokens=20,
             pad_token_id=tokenizer.eos_token_id,
-            do_sample=True,
+            do_sample=False,
             top_p=0.5,
             temperature=0.3,
             num_return_sequences=1,
-            no_repeat_ngram_size=2,
+            no_repeat_ngram_size=3,
             early_stopping=True,
         )
     response_en = tokenizer.decode(output_ids[0], skip_special_tokens=True)
