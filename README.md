@@ -6,4 +6,4 @@ DOSYA BOYUTU ÇOK BÜYÜK OLDUĞU İÇİN MODELİN HAZIR HALİNİ ATMADIM. ÖNCE
 ## şuan proje çalışıyor ama isteğe bağlı olarak daha iyi bir model ile eğitilebilir.
 
 linkedinden ulaşırsanız kullandığım datasetleri paylaşırım.
-www.linkedin.com/in/bünyamin-öter-63800629a
+www.linkedin.com/in/bünyamin-öter
